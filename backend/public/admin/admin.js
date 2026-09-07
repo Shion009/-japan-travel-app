@@ -7,7 +7,7 @@ function apiBase() {
 }
 function adminKey() {
   const el = $("adminKey");
-  return el ? el.value.trim() : "changeme123";
+  return el ? el.value.trim() : "admin_japan_2024";
 }
 
 let REGIONS = [];
