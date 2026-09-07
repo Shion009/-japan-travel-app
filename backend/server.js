@@ -113,6 +113,54 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+// ---------- Seed (ใช้ครั้งเดียวสำหรับ import ข้อมูลลง cloud DB) ----------
+
+app.post("/api/admin/seed", requireAdmin, async (req, res) => {
+  try {
+    const sqlFile = path.join(__dirname, "init.sql");
+    if (!fs.existsSync(sqlFile)) {
+      return res.status(404).json({ error: "init.sql not found" });
+    }
+
+    const raw = fs.readFileSync(sqlFile, "utf8");
+
+    // แยก statements ตาม ; และกรองออก
+    const statements = raw
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && !s.startsWith("--"));
+
+    const results = { ok: 0, skipped: 0, errors: [] };
+
+    for (const stmt of statements) {
+      try {
+        await pool.query(stmt);
+        results.ok++;
+      } catch (e) {
+        if (e.code === "ER_DUP_ENTRY" || e.code === "ER_TABLE_EXISTS_ERROR") {
+          results.skipped++;
+        } else {
+          results.errors.push({ stmt: stmt.slice(0, 80), error: e.message });
+        }
+      }
+    }
+
+    const [spotCount] = await pool.query("SELECT COUNT(*) as cnt FROM spots");
+    const [userCount] = await pool.query("SELECT COUNT(*) as cnt FROM users");
+
+    res.json({
+      message: "Seed เสร็จสิ้น!",
+      statements: results.ok,
+      skipped: results.skipped,
+      errors: results.errors,
+      db: { spots: spotCount[0].cnt, users: userCount[0].cnt },
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 /** แปลงลิงก์แชร์ เช่น Google Drive หรือ Dropbox ให้เป็น Direct Image URL อัตโนมัติ */
 function normalizeImageUrl(url) {
   if (!url || typeof url !== "string") return url;
