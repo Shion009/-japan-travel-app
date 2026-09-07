@@ -442,71 +442,85 @@ function updateDbLinks() {
 }
 
 function updatePmaLink() {
-  const url = $("pmaUrl").value.trim() || "http://localhost:8080/phpmyadmin";
-  $("pmaBtn").href = url;
+  const pmaEl = $("pmaUrl");
+  const pmaBtn = $("pmaBtn");
+  if (!pmaBtn) return;
+  const url = (pmaEl && pmaEl.value.trim()) || "http://localhost:8080/phpmyadmin";
+  pmaBtn.href = url;
 }
 
 async function loadDbStats() {
   const btn = $("dbRefreshBtn");
-  btn.textContent = "...";
+  if (btn) btn.textContent = "...";
   try {
     const base = apiBase();
-    const key  = encodeURIComponent(adminKey());
-    const res  = await fetch(`${base}/api/db?x-admin-key=${key}`);
-    if (!res.ok) throw new Error("unauthorized");
+    const res  = await fetch(`${base}/api/db`);
+    if (!res.ok) throw new Error("error fetching db");
     const data = await res.json();
-    $("statSpots").textContent   = (data.spots   || []).length;
-    $("statRegions").textContent = (data.regions || []).length;
-    $("statCats").textContent    = (data.categories || []).length;
-    $("statUsers").textContent   = (data.users   || []).length;
+    if ($("statSpots"))   $("statSpots").textContent   = (data.spots   || []).length;
+    if ($("statRegions")) $("statRegions").textContent = (data.regions || []).length;
+    if ($("statCats"))    $("statCats").textContent    = (data.categories || []).length;
+    if ($("statUsers"))   $("statUsers").textContent   = (data.users   || []).length;
   } catch (e) {
-    $("statSpots").textContent = $("statRegions").textContent = $("statCats").textContent = $("statUsers").textContent = "!";
+    if ($("statSpots")) $("statSpots").textContent = "!";
   }
-  btn.textContent = "↻";
+  if (btn) btn.textContent = "↻";
 }
 
 // ================= Event Listeners =================
 setupTabs();
 
-$("spotForm").addEventListener("submit", submitForm);
-$("resetBtn").addEventListener("click", resetForm);
-$("refreshBtn").addEventListener("click", loadSpots);
-$("searchBox").addEventListener("input", () => {
-  clearTimeout(window.__searchDebounce);
-  window.__searchDebounce = setTimeout(loadSpots, 300);
-});
+if ($("spotForm")) $("spotForm").addEventListener("submit", submitForm);
+if ($("resetBtn")) $("resetBtn").addEventListener("click", resetForm);
+if ($("refreshBtn")) $("refreshBtn").addEventListener("click", loadSpots);
+if ($("searchBox")) {
+  $("searchBox").addEventListener("input", () => {
+    clearTimeout(window.__searchDebounce);
+    window.__searchDebounce = setTimeout(loadSpots, 300);
+  });
+}
 
-$("userForm").addEventListener("submit", submitUserForm);
-$("userResetBtn").addEventListener("click", resetUserForm);
-$("userRefreshBtn").addEventListener("click", loadUsers);
-$("userSearchBox").addEventListener("input", () => {
-  clearTimeout(window.__userSearchDebounce);
-  window.__userSearchDebounce = setTimeout(loadUsers, 300);
-});
+if ($("userForm")) $("userForm").addEventListener("submit", submitUserForm);
+if ($("userResetBtn")) $("userResetBtn").addEventListener("click", resetUserForm);
+if ($("userRefreshBtn")) $("userRefreshBtn").addEventListener("click", loadUsers);
+if ($("userSearchBox")) {
+  $("userSearchBox").addEventListener("input", () => {
+    clearTimeout(window.__userSearchDebounce);
+    window.__userSearchDebounce = setTimeout(loadUsers, 300);
+  });
+}
 
-$("apiBase").addEventListener("change", () => {
-  updateDbLinks();
-  loadMeta().then(loadSpots);
-  loadDbStats();
-});
-$("adminKey").addEventListener("change", () => {
-  updateDbLinks();
-  loadDbStats();
-  const activeTab = document.querySelector(".nav-tab.active");
-  if (activeTab && activeTab.dataset.tab === "usersTabContent") {
+if ($("apiBase")) {
+  $("apiBase").addEventListener("change", () => {
+    updateDbLinks();
+    loadMeta().then(loadSpots);
+    loadDbStats();
+  });
+}
+
+if ($("adminKey")) {
+  $("adminKey").addEventListener("change", () => {
+    updateDbLinks();
+    loadDbStats();
+  });
+}
+
+if ($("pmaUrl")) {
+  $("pmaUrl").addEventListener("input", updatePmaLink);
+  $("pmaUrl").addEventListener("change", updatePmaLink);
+}
+
+if ($("dbRefreshBtn")) {
+  $("dbRefreshBtn").addEventListener("click", () => {
+    loadDbStats();
+    loadSpots();
     loadUsers();
-  }
-});
-$("pmaUrl").addEventListener("input", updatePmaLink);
-$("pmaUrl").addEventListener("change", updatePmaLink);
-$("dbRefreshBtn").addEventListener("click", () => {
-  loadDbStats();
-  loadSpots();
-  loadUsers();
-});
+  });
+}
 
 // Initialize
 updateDbLinks();
 updatePmaLink();
 loadDbStats();
 loadMeta().then(loadSpots);
+
