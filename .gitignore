@@ -1,0 +1,23 @@
+# Flutter
+flutter_app/build/
+flutter_app/.dart_tool/
+flutter_app/.flutter-plugins
+flutter_app/.flutter-plugins-dependencies
+flutter_app/.packages
+
+# Backend
+backend/node_modules/
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/.env
+backend/err.log
+backend/out.log
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

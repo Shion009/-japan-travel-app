@@ -1,0 +1,19 @@
+/**
+ * db.js  — MySQL connection pool
+ * แทนที่ db.json เดิม ใช้ mysql2/promise pool
+ */
+const mysql = require("mysql2/promise");
+
+const pool = mysql.createPool({
+  host:            process.env.DB_HOST || "localhost",
+  port:            process.env.DB_PORT || 3306,
+  user:            process.env.DB_USER || "root",
+  password:        process.env.DB_PASS || "",
+  database:        process.env.DB_NAME || "japan_travel",
+  charset:         "utf8mb4",
+  waitForConnections: true,
+  connectionLimit:    10,
+  queueLimit:         0,
+});
+
+module.exports = pool;

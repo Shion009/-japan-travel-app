@@ -1,0 +1,23 @@
+{
+  "name": "japan-travel-backend",
+  "version": "1.0.0",
+  "description": "REST API + admin panel for the Japan travel guide app",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.0",
+    "mysql2": "^3.23.3"
+  }
+}

@@ -1,0 +1,6 @@
+node_modules/
+uploads/*
+!uploads/.gitkeep
+.env
+err.log
+out.log
