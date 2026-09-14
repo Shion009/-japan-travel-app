@@ -2,7 +2,7 @@
     <!-- Internet permission — required for API calls to Railway backend -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="เที่ยวญี่ปุ่น"
+        android:label="Japan Travel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

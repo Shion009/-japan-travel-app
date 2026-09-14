@@ -12,7 +12,7 @@ import '../models/user.dart';
 /// - Can be overridden with --dart-define=API_BASE_URL=http://...
 class ApiService {
   /// URL ของ Render backend (production)
-  static const String _renderUrl = 'https://japan-travel-api.onrender.com';
+  static const String _renderUrl = 'https://japan-travel-api-7ifd.onrender.com';
 
   static String get baseUrl {
     // 1. ถ้า build ด้วย --dart-define=API_BASE_URL=... ให้ใช้ค่านั้นก่อนเลย
